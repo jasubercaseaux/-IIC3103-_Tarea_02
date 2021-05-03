@@ -217,6 +217,10 @@ def delete_artist(id):
 @app.route("/albums/<id>", methods=["DELETE"])
 def delete_album(id):
     album = Album.query.get_or_404(id)
+    all_tracks = Track.query.all()
+    for i in all_tracks:
+        if i.album_id == id:
+            db.session.delete(i)
     db.session.delete(album)
     db.session.commit()
     resp = jsonify({"message": "deleted"})
@@ -244,7 +248,7 @@ def delete_track(id):
 @app.route("/artists/<id>/albums/play", methods=["PUT"])
 def edit_artist(id):
     artist = Artist.query.get_or_404(id)
-    
+
     all_albums = Album.query.all()
     albums_artista = []
     for i in all_albums:
