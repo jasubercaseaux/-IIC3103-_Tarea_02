@@ -205,7 +205,9 @@ def delete_artist(id):
     artist = Artist.query.get_or_404(id)
     db.session.delete(artist)
     db.session.commit()
-    return jsonify({"message": "deleted"})
+    resp = jsonify({"message": "deleted"})
+    resp.status_code = 204
+    return resp
 
 
 #DELETE Album
@@ -214,7 +216,9 @@ def delete_album(id):
     album = Album.query.get_or_404(id)
     db.session.delete(album)
     db.session.commit()
-    return jsonify({"message": "deleted"})
+    resp = jsonify({"message": "deleted"})
+    resp.status_code = 204
+    return resp
 
 
 #DELETE Track
@@ -223,7 +227,9 @@ def delete_track(id):
     track = Track.query.get_or_404(id)
     db.session.delete(track)
     db.session.commit()
-    return jsonify({"message": "deleted"})
+    resp = jsonify({"message": "deleted"})
+    resp.status_code = 204
+    return resp
 
 
 
@@ -231,95 +237,68 @@ def delete_track(id):
 # PUT METHOD
 #------------------------------------------------------------------------------
 
-#PUT Reproducir todas las canciones de un artista
-'''
-@app.route("/puppies/<id>", methods=["PUT"])
-def edit_canciones_artista(id):
-    artista = Artist.query.get_or_404(id)
+#PUT Reproducir un artista
+@app.route("/artists/<id>/albums/play", methods=["PUT"])
+def edit_artist(id):
+    artist = Artist.query.get_or_404(id)
     try:
-        artista = artist_schema.load(request.json, instance=artista)   #(request.json, session=db.session)
+        all_albums = Album.query.all()
+        albums_artista = []
+        for i in all_albums:
+            if i.artist_id == id:
+                albums_artista.append(i.id)
+        all_tracks = Track.query.all()
+        for j in all_tracks:
+            if j.album_id in albums_artista:
+                j.times_played += 1
+        db.session.commit()
     except ValidationError as errors:
         resp = jsonify(errors.messages)
         resp.status_code = 400
         return resp
-
-    all_albums = Album.query.all()
-    albums_artista = []
-    tracks_artista = []
-    for i in all_albums:
-        if i.artist_id == id:
-            albums_artista.append(i.id)
-    all_tracks = Track.query.all()
-    for j in all_tracks:
-        if j.album_id in albums_artista:
-            j.times_played += 1
-    
-    db.session.add(puppy)
-    db.session.commit()
-
-    resp = jsonify({"message": "updated"})
-    return resp
-'''
-
-
-
-'''
-@app.route("/puppies/<int:id>")
-def get_puppy(id):
-    puppy = Puppy.query.get_or_404(id)
-    return puppy_schema.jsonify(puppy)
-
-
-@app.route("/puppies/", methods=["GET"])
-def list_puppies():
-    all_puppies = Puppy.query.all()
-    return puppies_schema.jsonify(all_puppies)
-
-
-@app.route("/puppies/", methods=["POST"])
-def create_puppy():
-    try:
-        puppy = puppy_schema.load(request.form)
-    except ValidationError as errors:
-        resp = jsonify(errors.messages)
-        resp.status_code = 400
-        return resp
-
-    puppy.slug = slugify(puppy.name)
-    db.session.add(puppy)
-    db.session.commit()
-
-    resp = jsonify({"message": "created"})
-    resp.status_code = 201
-    resp.headers["Location"] = puppy.url
-    return resp
-
-
-@app.route("/puppies/<int:id>", methods=["POST"])
-def edit_puppy(id):
-    puppy = Puppy.query.get_or_404(id)
-    try:
-        puppy = puppy_schema.load(request.form, instance=puppy)
-    except ValidationError as errors:
-        resp = jsonify(errors.messages)
-        resp.status_code = 400
-        return resp
-
-    puppy.slug = slugify(puppy.name)
-    db.session.add(puppy)
-    db.session.commit()
 
     resp = jsonify({"message": "updated"})
     return resp
 
 
-@app.route("/puppies/<int:id>", methods=["DELETE"])
-def delete_puppy(id):
-    puppy = Puppy.query.get_or_404(id)
-    db.session.delete(puppy)
-    db.session.commit()
-    return jsonify({"message": "deleted"})
-'''
+#PUT Reproducir un album
+@app.route("/albums/<id>/tracks/play", methods=["PUT"])
+def edit_album(id):
+    album = Album.query.get_or_404(id)
+    try:
+        all_tracks = Track.query.all()
+        for i in all_tracks:
+            if i.album_id == id:
+                i.times_played += 1
+        db.session.commit()
+    except ValidationError as errors:
+        resp = jsonify(errors.messages)
+        resp.status_code = 400
+        return resp
+
+    resp = jsonify({"message": "updated"})
+    return resp
+
+
+#PUT Reproducir una cancion
+@app.route("/tracks/<id>/play", methods=["PUT"])
+def edit_track(id):
+    track = Track.query.get_or_404(id)
+    try:
+        track.times_played += 1
+        db.session.commit()
+    except ValidationError as errors:
+        resp = jsonify(errors.messages)
+        resp.status_code = 400
+        return resp
+
+    resp = jsonify({"message": "updated"})
+    return resp
+
+#------------------------------------------------------------------------------
+# ERRORES Y MAIN
+#------------------------------------------------------------------------------
+
 
 @app.errorhandler(404)
 def page_not_found(error):
