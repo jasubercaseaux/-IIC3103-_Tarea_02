@@ -254,6 +254,7 @@ def edit_artist(id):
         for j in all_tracks:
             if j.album_id in albums_artista:
                 j.times_played += 1
+                db.session.add(j)
         db.session.commit()
     except ValidationError as errors:
         resp = jsonify(errors.messages)
@@ -273,6 +274,7 @@ def edit_album(id):
         for i in all_tracks:
             if i.album_id == id:
                 i.times_played += 1
+                db.session.add(i)
         db.session.commit()
     except ValidationError as errors:
         resp = jsonify(errors.messages)
@@ -289,6 +291,7 @@ def edit_track(id):
     track = Track.query.get_or_404(id)
     try:
         track.times_played += 1
+        db.session.add(track)
         db.session.commit()
     except ValidationError as errors:
         resp = jsonify(errors.messages)
