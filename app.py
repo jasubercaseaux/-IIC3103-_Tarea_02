@@ -9,11 +9,13 @@ from base64 import b64encode
 from decouple import config as config_decouple
 
 
-#app = Flask(__name__)
-#app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///artist.db"
-#db.init_app(app)
-#ma.init_app(app)
+app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///artist.db"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+db.init_app(app)
+ma.init_app(app)
 
+'''
 def create_app(enviroment):
     app = Flask(__name__)
 
@@ -31,7 +33,7 @@ if config_decouple('PRODUCTION', default=False):
     enviroment = config['production']
 
 app = create_app(enviroment)
-
+'''
 
 
 #------------------------------------------------------------------------------
