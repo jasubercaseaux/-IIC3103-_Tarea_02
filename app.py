@@ -26,9 +26,9 @@ def create_app(enviroment):
 
     return app
 
-enviroment = config_decouple['development']
+enviroment = config['development']
 if config_decouple('PRODUCTION', default=False):
-    enviroment = config_decouple['production']
+    enviroment = config['production']
 
 app = create_app(enviroment)
 
