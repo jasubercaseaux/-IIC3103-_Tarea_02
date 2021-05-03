@@ -57,6 +57,7 @@ def get_artist(id):
 #GET Artist Albums 
 @app.route("/artists/<id>/albums", methods=["GET"])
 def get_artist_albums(id):
+    artist = Artist.query.get_or_404(id)
     all_albums = Album.query.all()
     albums_artista = []
     for i in all_albums:
@@ -68,6 +69,7 @@ def get_artist_albums(id):
 #GET Artist Tracks 
 @app.route("/artists/<id>/tracks", methods=["GET"])
 def get_artist_tracks(id):
+    artist = Artist.query.get_or_404(id)
     all_albums = Album.query.all()
     albums_artista = []
     tracks_artista = []
@@ -98,6 +100,7 @@ def get_album(id):
 #GET Album Tracks
 @app.route("/albums/<id>/tracks", methods=["GET"])
 def get_album_tracks(id):
+    album = Album.query.get_or_404(id)
     all_tracks = Track.query.all()
     tracks_album = []
     for i in all_tracks:
@@ -314,29 +317,33 @@ if __name__ == "__main__":
         print("Database created!")
 
     elif "seeddb" in sys.argv:
-        with app.app_context():
-            a1 = Artist(id = "TWljaGFlbCBKYWNrc29u",
-                        name = "Michael Jackson",
-                        age = 21)
-            db.session.add(a1)
+        #with app.app_context():
+        #    a1 = Artist(id = "TWljaGFlbCBKYWNrc29u",
+        #                name = "Michael Jackson",
+        #                age = 21)
+        #    db.session.add(a1)
 
-            al1 = Album(id = "T2ZmIHRoZSBXYWxsOlRXbG",
-                        artist_id = "TWljaGFlbCBKYWNrc29u",
-                        name = "Off the Wall",
-                        genre = "Pop")
+        #    al1 = Album(id = "T2ZmIHRoZSBXYWxsOlRXbG",
+        #                artist_id = "TWljaGFlbCBKYWNrc29u",
+        #                name = "Off the Wall",
+        #                genre = "Pop")
 
-            db.session.add(al1)
+        #    db.session.add(al1)
             
-            t1 = Track(id = "RG9uJ3QgU3RvcCAnVGlsIF",
-                       album_id = "T2ZmIHRoZSBXYWxsOlRXbG",
-                       name = "Don't Stop 'Til You Get Enough",
-                       duration = 4.1,
-                       times_played = 0)
+        #    t1 = Track(id = "RG9uJ3QgU3RvcCAnVGlsIF",
+        #               album_id = "T2ZmIHRoZSBXYWxsOlRXbG",
+        #               name = "Don't Stop 'Til You Get Enough",
+        #               duration = 4.1,
+        #               times_played = 0)
 
-            db.session.add(t1)
+        #    db.session.add(t1)
 
-            db.session.commit()
-        print("Database seeded!")
+        #    db.session.commit()
+        print("Database seeded!")   # No va a haber seed.
 
     else:
         app.run(debug=True)
+
+
+# Se uso el siguiente tutorial como base, para entender el uso de flask
+# https://www.youtube.com/watch?v=6RdZNiyISVU
