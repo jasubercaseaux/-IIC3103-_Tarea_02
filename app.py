@@ -244,22 +244,18 @@ def delete_track(id):
 @app.route("/artists/<id>/albums/play", methods=["PUT"])
 def edit_artist(id):
     artist = Artist.query.get_or_404(id)
-    try:
-        all_albums = Album.query.all()
-        albums_artista = []
-        for i in all_albums:
-            if i.artist_id == id:
-                albums_artista.append(i.id)
-        all_tracks = Track.query.all()
-        for j in all_tracks:
-            if j.album_id in albums_artista:
-                j.times_played += 1
-                db.session.add(j)
-        db.session.commit()
-    except ValidationError as errors:
-        resp = jsonify(errors.messages)
-        resp.status_code = 400
-        return resp
+    
+    all_albums = Album.query.all()
+    albums_artista = []
+    for i in all_albums:
+        if i.artist_id == id:
+            albums_artista.append(i.id)
+    all_tracks = Track.query.all()
+    for j in all_tracks:
+        if j.album_id in albums_artista:
+            j.times_played += 1
+            db.session.add(j)
+    db.session.commit()
 
     resp = jsonify({"message": "updated"})
     return resp
@@ -269,17 +265,13 @@ def edit_artist(id):
 @app.route("/albums/<id>/tracks/play", methods=["PUT"])
 def edit_album(id):
     album = Album.query.get_or_404(id)
-    try:
-        all_tracks = Track.query.all()
-        for i in all_tracks:
-            if i.album_id == id:
-                i.times_played += 1
-                db.session.add(i)
-        db.session.commit()
-    except ValidationError as errors:
-        resp = jsonify(errors.messages)
-        resp.status_code = 400
-        return resp
+
+    all_tracks = Track.query.all()
+    for i in all_tracks:
+        if i.album_id == id:
+            i.times_played += 1
+            db.session.add(i)
+    db.session.commit()
 
     resp = jsonify({"message": "updated"})
     return resp
@@ -289,14 +281,9 @@ def edit_album(id):
 @app.route("/tracks/<id>/play", methods=["PUT"])
 def edit_track(id):
     track = Track.query.get_or_404(id)
-    try:
-        track.times_played += 1
-        db.session.add(track)
-        db.session.commit()
-    except ValidationError as errors:
-        resp = jsonify(errors.messages)
-        resp.status_code = 400
-        return resp
+    track.times_played += 1
+    db.session.add(track)
+    db.session.commit()
 
     resp = jsonify({"message": "updated"})
     return resp
