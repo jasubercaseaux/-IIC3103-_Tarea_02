@@ -133,6 +133,10 @@ def create_artist():
     try:
         nombre_codif = b64encode(request.json['name'].encode()).decode('utf-8')
         nombre_corto = nombre_codif[:22]
+        if Artist.query.get(nombre_corto):
+            resp = resp = jsonify({"message": "ya existe"})
+            resp.status_code = 409
+            return resp
         request.json['id'] = nombre_corto
         artist = artist_schema.load(request.json, session=db.session)
     except ValidationError as errors:
@@ -153,11 +157,19 @@ def create_artist():
 @app.route("/artists/<id>/albums", methods=["POST"])
 def create_album(id):
     try:
+        if not(Artist.query.get(id)):
+            resp = resp = jsonify({"message": "artista no existe"})
+            resp.status_code = 422
+            return resp
         nombre_a_codificar = request.json['name'] + ":" + id
         nombre_codif = b64encode(nombre_a_codificar.encode()).decode('utf-8')
         nombre_corto = nombre_codif[:22]
         request.json['artist_id'] = id
         request.json['id'] = nombre_corto
+        if Album.query.get(nombre_corto):
+            resp = resp = jsonify({"message": "ya existe"})
+            resp.status_code = 409
+            return resp
         album = album_schema.load(request.json, session=db.session)
     except ValidationError as errors:
         resp = jsonify(errors.messages)
